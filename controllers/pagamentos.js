@@ -1,10 +1,60 @@
 module.exports = function (app) {
-    app.get('/pagamentos', function (req, res) {
-        console.log('Recebida requisição de teste.');
-        res.send('Ok.');
+
+    app.get('/pagamentos', (req, res) => {
+        let connection = app.persistencia.connectionFactory();
+        let pagamentoDao = new app.persistencia.pagamentoDao(connection);
+
+        let x = pagamentoDao.lista(erro => {
+            if (erro) {
+                res.status(500).send(erro);
+                return;
+            }
+
+            res.send(x);
+        });
     });
 
-    app.post("/pagamentos/pagamento", function (req, res) {
+    app.delete('/pagamentos/pagamento/:id', (req, res) => {
+        let pagamento = {};
+        let id = req.params.id;
+
+        pagamento.id = id;
+        pagamento.status = 'CANCELADO';
+
+        let connection = app.persistencia.connectionFactory();
+        let pagamentoDao = new app.persistencia.pagamentoDao(connection);
+
+        pagamentoDao.atualiza(pagamento, erro => {
+            if (erro) {
+                res.status(500).send(erro);
+                return;
+            }
+            res.send(pagamento);
+        });
+
+    });
+
+    app.put('/pagamentos/pagamento/:id', (req, res) => {
+
+        let pagamento = {};
+        let id = req.params.id;
+        let connection = app.persistencia.connectionFactory();
+        let pagamentoDao = new app.persistencia.pagamentoDao(connection);
+
+        pagamento.id = id;
+        pagamento.status = 'CONFIRMADO';
+
+        pagamentoDao.atualiza(pagamento, erro => {
+            if (erro) {
+                res.status(500).send(erro);
+                return;
+            }
+
+            res.send(pagamento);
+        });
+    })
+
+    app.post('/pagamentos/pagamento', (req, res) => {
         let pagamento = req.body;
 
         req.assert("forma_de_pagamento", "Forma de pagamento é obrigatória.").notEmpty();
@@ -25,9 +75,27 @@ module.exports = function (app) {
         let connection = app.persistencia.connectionFactory();
         let pagamentoDao = new app.persistencia.pagamentoDao(connection);
 
-        pagamentoDao.salva(pagamento, function (error, result) {
-            console.log('pagamento criado: ' + result);
-            res.json(pagamento);
+        pagamentoDao.salva(pagamento, (erro, resultado) => {
+            if (erro) {
+                console.log('Erro ao inserir no banco:' + erro);
+                res.status(500).send(erro);
+                return;
+            }
+
+            pagamento.id = resultado.insertId;
+
+            let result = {
+                dados_do_pagamento: pagamento,
+                links: [
+                    {
+                        href: `http://localhost:4000/pagamentos/pagamento/${pagamento.id}`,
+                        rel: 'confirmar',
+                        method: 'PUT'
+                    }
+                ]
+            };
+
+            res.status(201).json(result);
         });
     });
 }
