@@ -1,19 +1,25 @@
 {
-  "name": "node",
+  "name": "payfast",
   "version": "1.0.0",
-  "description": "Site da casa do código",
+  "description": "gateway de pagamentos utilizando recursos http.",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "Acaciano Neves",
+  "keywords": [
+    "api",
+    "gateway",
+    "javascript"
+  ],
+  "author": "juliocvidal",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.2",
-    "consign": "^0.1.6",
-    "express": "^4.16.2",
-    "express-validator": "^4.3.0",
+    "body-parser": "^1.15.2",
+    "consign": "^0.1.2",
+    "express": "^4.14.0",
+    "express-validator": "^2.20.8",
     "mysql": "^2.15.0",
-    "nodemon": "^1.14.11"
+    "restify": "^4.1.1",
+    "soap": "^0.16.0"
   }
 }
