@@ -1,7 +1,41 @@
 module.exports = function (app) {
+
   app.get('/pagamentos', function (req, res) {
-    console.log('Recebida requisicao de teste na porta 3000.')
-    res.send('OK.');
+    let connection = app.persistencia.connectionFactory();
+    let pagamentoDao = new app.persistencia.PagamentoDao(connection);
+
+    pagamentoDao.lista(function (erro, resultado) {
+      if (erro) {
+        res.status(500).send(erro);
+        return;
+      }
+      res.json(resultado);
+    });
+  });
+
+  app.get('/pagamentos/pagamento/:id', function (req, res) {
+    let id = req.params.id;
+
+    let memcachedClient = app.servicos.memcachedClient();
+    let connection = app.persistencia.connectionFactory();
+    let pagamentoDao = new app.persistencia.PagamentoDao(connection);
+
+    memcachedClient.get('pagamento-' + id, function (erro, retorno) {
+      if (erro || !retorno) {
+
+        pagamentoDao.buscaPorId(id, function (erro, resultado) {
+          if (erro) {
+            res.status(500).send(erro);
+            return;
+          }
+          res.json(resultado);
+        });
+
+        return;
+      }
+
+      res.json(retorno);
+    });
   });
 
   app.delete('/pagamentos/pagamento/:id', function (req, res) {
@@ -68,6 +102,7 @@ module.exports = function (app) {
     pagamento.status = 'CRIADO';
     pagamento.data = new Date;
 
+    let memcachedClient = app.servicos.memcachedClient();
     let connection = app.persistencia.connectionFactory();
     let pagamentoDao = new app.persistencia.PagamentoDao(connection);
 
@@ -77,6 +112,10 @@ module.exports = function (app) {
         res.status(500).send(erro);
       } else {
         pagamento.id = resultado.insertId;
+
+        memcachedClient.set('pagamento-' + pagamento.id, pagamento, 60, function (err) {
+          console.log('nova chave: pagamento-' + pagamento.id);
+        });
 
         if (pagamento.forma_de_pagamento == 'cartao') {
           let cartao = req.body["cartao"];
