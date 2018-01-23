@@ -2,6 +2,7 @@ let express = require('express');
 let consign = require('consign');
 let bodyParser = require('body-parser');
 let expressValidator = require('express-validator');
+let jwt = require('jsonwebtoken');
 
 module.exports = function(){
   let app = express();
@@ -16,7 +17,8 @@ module.exports = function(){
    .then('persistencia')
    .then('servicos')
    .then('helpers')
-   .into(app);
+   .then('filters')
+   .into(app,jwt);
 
   return app;
 }
