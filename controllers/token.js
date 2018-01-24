@@ -5,7 +5,7 @@ module.exports = function (app, jwt) {
     app.get('/token', function (req, res) {
         let user = { id: 3 };
 
-        var token = jwt.sign(user, config.secret, {
+        let token = jwt.sign(user, config.secret, {
             expiresIn: 60
         });
 
@@ -14,6 +14,5 @@ module.exports = function (app, jwt) {
             message: 'Enjoy your token!',
             token: token
         });
-
     });
 }

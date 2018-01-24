@@ -1,10 +1,10 @@
 let authorize = require('../filters/authorize');
 
 module.exports = function (app, jwt) {
-
+  
   app.get('/pagamentos', function (req, res) {
 
-      app.filters.authorize(jwt, req, res, function () {
+    authorize.authorize(jwt, req, res, function () {
       let connection = app.persistencia.connectionFactory();
       let pagamentoDao = new app.persistencia.PagamentoDao(connection);
 

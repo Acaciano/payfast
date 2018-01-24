@@ -1,6 +1,6 @@
 let config = require('../config/secret');
 
-function authorize(jwt, req, res, action) {
+exports.authorize = function (jwt, req, res, action) {
     let token = req.body.token || req.query.token || req.headers['x-access-token'];
 
     if (token) {
@@ -18,8 +18,4 @@ function authorize(jwt, req, res, action) {
             message: 'Nenhum token fornecido.'
         });
     }
-}
-
-module.exports = function () {
-    return authorize;
 };

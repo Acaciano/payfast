@@ -17,7 +17,6 @@ module.exports = function(){
    .then('persistencia')
    .then('servicos')
    .then('helpers')
-   .then('filters')
    .into(app,jwt);
 
   return app;
