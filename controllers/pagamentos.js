@@ -1,20 +1,17 @@
-let authorize = require('../filters/authorize');
+let authorize = require('../filters/authorization');
 
 module.exports = function (app, jwt) {
-  
   app.get('/pagamentos', function (req, res) {
 
-    authorize.authorize(jwt, req, res, function () {
-      let connection = app.persistencia.connectionFactory();
-      let pagamentoDao = new app.persistencia.PagamentoDao(connection);
+    let connection = app.persistencia.connectionFactory();
+    let pagamentoDao = new app.persistencia.PagamentoDao(connection);
 
-      pagamentoDao.lista(function (erro, resultado) {
-        if (erro) {
-          res.status(500).send(erro);
-          return;
-        }
-        res.json(resultado);
-      });
+    pagamentoDao.lista(function (erro, resultado) {
+      if (erro) {
+        res.status(500).send(erro);
+        return;
+      }
+      res.json(resultado);
     });
   });
 

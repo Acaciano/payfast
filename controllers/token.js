@@ -3,9 +3,9 @@ let config = require('../config/secret');
 module.exports = function (app, jwt) {
 
     app.post('/token', function (req, res) {
+
         let user = undefined;
         let connection = app.persistencia.connectionFactory();
-
         let email = req.body.email ? req.body.email : '';
         let password = req.body.password ? req.body.password : '';
 
