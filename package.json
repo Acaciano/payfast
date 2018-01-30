@@ -20,6 +20,7 @@
     "express-validator": "^2.20.8",
     "jsonwebtoken": "^8.1.1",
     "memcached": "^2.2.2",
+    "moment": "^2.20.1",
     "mysql": "^2.15.0",
     "restify": "^4.1.1",
     "soap": "^0.16.0"

@@ -15,6 +15,7 @@ module.exports = function(){
   consign()
    .include('controllers')
    .then('persistencia')
+   .then('models')
    .then('servicos')
    .then('helpers')
    .into(app,jwt);
